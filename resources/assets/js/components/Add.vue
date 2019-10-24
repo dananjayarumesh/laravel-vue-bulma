@@ -36,12 +36,12 @@
 </template>
 
 <script>
+
 export default {
   props: ["openmodal"],
   data() {
     return {
       list: {
-        baseUrl: '',
         name: "",
         email: "",
         phone: ""
@@ -53,8 +53,8 @@ export default {
       this.$emit("closeRequest");
     },
     save() {
-
-      axios.post(baseUrl+"/phonebook").then((response) => console.log(response)).catch((error)=> console.log(error));
+console.log(BASE_URL+"/phonebook");
+      axios.post(BASE_URL+"/phonebook", this.$data.list).then((response) => this.close()).catch((error)=> console.log(error));
 
 
       // axios

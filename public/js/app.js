@@ -1157,6 +1157,8 @@ window.axios = __webpack_require__(17);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
+// window.axios.defaults.baseURL = 'https://www.example.com/demos/app';
+
 /**
  * Next we will register the CSRF Token as a common header with Axios so that
  * all outgoing HTTP requests automatically have it attached. This is just
@@ -45405,12 +45407,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["openmodal"],
   data: function data() {
     return {
       list: {
-        baseUrl: '',
         name: "",
         email: "",
         phone: ""
@@ -45423,9 +45425,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       this.$emit("closeRequest");
     },
     save: function save() {
+      var _this = this;
 
-      axios.post(baseUrl + "/phonebook").then(function (response) {
-        return console.log(response);
+      console.log(BASE_URL + "/phonebook");
+      axios.post(BASE_URL + "/phonebook", this.$data.list).then(function (response) {
+        return _this.close();
       }).catch(function (error) {
         return console.log(error);
       });

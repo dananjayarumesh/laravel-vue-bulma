@@ -7,7 +7,7 @@
 	</head>
 	<body>
 
-
+		<input type="hidden" value="{{ url('/') }}" v-model="baseUrl" />
 
 		<div id="app">
      

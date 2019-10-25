@@ -11,20 +11,23 @@
           <label class="label">Name</label>
           <div class="control">
             <!--v-modal is for getting data -->
-            <input class="input" type="text" placeholder="Name" v-model="list.name" />
+            <input class="input" :class="{'is-danger':errors.name}" type="text" placeholder="Name" v-model="list.name" />
           </div>
+          <small v-if="errors.name" class="has-text-danger">{{errors.name[0]}}</small>
         </div>
         <div class="field">
           <label class="label">Phone</label>
           <div class="control">
-            <input class="input" type="text" placeholder="Phone" v-model="list.phone" />
+            <input class="input" :class="{'is-danger':errors.phone}" type="text" placeholder="Phone" v-model="list.phone" />
           </div>
+          <small v-if="errors.phone" class="has-text-danger">{{errors.phone[0]}}</small>
         </div>
         <div class="field">
           <label class="label">Email</label>
           <div class="control">
-            <input class="input" type="text" placeholder="Email" v-model="list.email" />
+            <input class="input" :class="{'is-danger':errors.email}" type="text" placeholder="Email" v-model="list.email" />
           </div>
+          <small v-if="errors.email" class="has-text-danger">{{errors.email[0]}}</small>
         </div>
       </section>
       <footer class="modal-card-foot">
@@ -36,7 +39,6 @@
 </template>
 
 <script>
-
 export default {
   props: ["openmodal"],
   data() {
@@ -45,7 +47,8 @@ export default {
         name: "",
         email: "",
         phone: ""
-      }
+      },
+      errors: {}
     };
   },
   methods: {
@@ -53,15 +56,18 @@ export default {
       this.$emit("closeRequest");
     },
     save() {
-console.log(BASE_URL+"/phonebook");
-      axios.post(BASE_URL+"/phonebook", this.$data.list).then((response) => this.close()).catch((error)=> console.log(error));
+      console.log(BASE_URL + "/phonebook");
 
+      axios
+        .post(BASE_URL + "/phonebook", this.$data.list)
+        .then(response => this.close())
+        .catch(error => {
+          this.errors = error.response.data.errors;
+          console.log(this.errors);
+        });
 
       // axios
-      //   .post("/user", {
-      //     firstName: "Fred",
-      //     lastName: "Flintstone"
-      //   })
+      //   .post(BASE_URL+"/phonebook", this.$data.list)
       //   .then(function(response) {
       //     console.log(response);
       //   })

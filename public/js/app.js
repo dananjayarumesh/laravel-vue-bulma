@@ -45293,27 +45293,53 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 var Addmodal = __webpack_require__(46);
+var Showmodal = __webpack_require__(63);
 /* harmony default export */ __webpack_exports__["default"] = ({
-    components: {
-        Addmodal: Addmodal
-    },
-    data: function data() {
-        return {
-            addActive: ''
-        };
-    },
+  components: {
+    Addmodal: Addmodal,
+    Showmodal: Showmodal
+  },
+  data: function data() {
+    return {
+      addActive: "",
+      showActive: "",
+      list: {},
+      errors: {}
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
 
-    methods: {
-        openAdd: function openAdd() {
-            this.addActive = 'is-active';
-        },
-        close: function close() {
-            this.addActive = '';
-        }
+    axios.post(BASE_URL + "/phonebook/getData").then(function (response) {
+      _this.list = response.data;
+      // console.log(response);
+    }).catch(function (error) {
+      _this.errors = error.response.data.errors;
+      console.log(error);
+    });
+  },
+
+  methods: {
+    openAdd: function openAdd() {
+      this.addActive = "is-active";
+    },
+    openShow: function openShow(key) {
+      // console.log(this.$childern);
+
+      // get $children
+      // console.log(this.$children);
+
+      this.$children[1].list = this.list[key];
+
+      this.showActive = "is-active";
+    },
+    close: function close() {
+      this.addActive = "";
+      this.showActive = "";
     }
+  }
 });
 
 /***/ }),
@@ -45406,7 +45432,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["openmodal"],
@@ -45416,7 +45444,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         name: "",
         email: "",
         phone: ""
-      }
+      },
+      errors: {}
     };
   },
 
@@ -45428,17 +45457,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       var _this = this;
 
       console.log(BASE_URL + "/phonebook");
+
       axios.post(BASE_URL + "/phonebook", this.$data.list).then(function (response) {
         return _this.close();
       }).catch(function (error) {
-        return console.log(error);
+        _this.errors = error.response.data.errors;
+        console.log(_this.errors);
       });
 
       // axios
-      //   .post("/user", {
-      //     firstName: "Fred",
-      //     lastName: "Flintstone"
-      //   })
+      //   .post(BASE_URL+"/phonebook", this.$data.list)
       //   .then(function(response) {
       //     console.log(response);
       //   })
@@ -45486,6 +45514,7 @@ var render = function() {
                 }
               ],
               staticClass: "input",
+              class: { "is-danger": _vm.errors.name },
               attrs: { type: "text", placeholder: "Name" },
               domProps: { value: _vm.list.name },
               on: {
@@ -45497,7 +45526,13 @@ var render = function() {
                 }
               }
             })
-          ])
+          ]),
+          _vm._v(" "),
+          _vm.errors.name
+            ? _c("small", { staticClass: "has-text-danger" }, [
+                _vm._v(_vm._s(_vm.errors.name[0]))
+              ])
+            : _vm._e()
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "field" }, [
@@ -45514,6 +45549,7 @@ var render = function() {
                 }
               ],
               staticClass: "input",
+              class: { "is-danger": _vm.errors.phone },
               attrs: { type: "text", placeholder: "Phone" },
               domProps: { value: _vm.list.phone },
               on: {
@@ -45525,7 +45561,13 @@ var render = function() {
                 }
               }
             })
-          ])
+          ]),
+          _vm._v(" "),
+          _vm.errors.phone
+            ? _c("small", { staticClass: "has-text-danger" }, [
+                _vm._v(_vm._s(_vm.errors.phone[0]))
+              ])
+            : _vm._e()
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "field" }, [
@@ -45542,6 +45584,7 @@ var render = function() {
                 }
               ],
               staticClass: "input",
+              class: { "is-danger": _vm.errors.email },
               attrs: { type: "text", placeholder: "Email" },
               domProps: { value: _vm.list.email },
               on: {
@@ -45553,7 +45596,13 @@ var render = function() {
                 }
               }
             })
-          ])
+          ]),
+          _vm._v(" "),
+          _vm.errors.email
+            ? _c("small", { staticClass: "has-text-danger" }, [
+                _vm._v(_vm._s(_vm.errors.email[0]))
+              ])
+            : _vm._e()
         ])
       ]),
       _vm._v(" "),
@@ -45592,28 +45641,62 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("nav", { staticClass: "panel column is-offset-2 is-8" }, [
-        _c("p", { staticClass: "panel-heading" }, [
-          _vm._v("\r\n      Contact Book\r\n      "),
-          _c(
-            "button",
-            {
-              staticClass: "button is-link is-outlined",
-              on: { click: _vm.openAdd }
-            },
-            [_vm._v("Add New")]
-          )
-        ]),
-        _vm._v(" "),
-        _vm._m(0),
-        _vm._v(" "),
-        _vm._m(1),
-        _vm._v(" "),
-        _c("div", { staticClass: "panel-block" })
-      ]),
+      _c(
+        "nav",
+        { staticClass: "panel column is-offset-2 is-8" },
+        [
+          _c("p", { staticClass: "panel-heading" }, [
+            _vm._v("\n      Contact Book\n      "),
+            _c(
+              "button",
+              {
+                staticClass: "button is-link is-outlined",
+                on: { click: _vm.openAdd }
+              },
+              [_vm._v("Add New")]
+            )
+          ]),
+          _vm._v(" "),
+          _vm._m(0),
+          _vm._v(" "),
+          _vm._l(_vm.list, function(item, key) {
+            return _c("a", { staticClass: "panel-block" }, [
+              _c("span", { staticClass: "column is-9" }, [
+                _vm._v(_vm._s(key + 1) + " " + _vm._s(item.name))
+              ]),
+              _vm._v(" "),
+              _c("span", { staticClass: "column is-1" }, [
+                _c(
+                  "button",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.openShow(key)
+                      }
+                    }
+                  },
+                  [_vm._v("View")]
+                )
+              ]),
+              _vm._v(" "),
+              _vm._m(1, true),
+              _vm._v(" "),
+              _vm._m(2, true)
+            ])
+          }),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel-block" })
+        ],
+        2
+      ),
       _vm._v(" "),
       _c("Addmodal", {
         attrs: { openmodal: _vm.addActive },
+        on: { closeRequest: _vm.close }
+      }),
+      _vm._v(" "),
+      _c("Showmodal", {
+        attrs: { openshowmodal: _vm.showActive },
         on: { closeRequest: _vm.close }
       })
     ],
@@ -45645,20 +45728,16 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("a", { staticClass: "panel-block" }, [
-      _c("span", { staticClass: "column is-9" }, [_vm._v("marksheet")]),
-      _vm._v(" "),
-      _c("span", { staticClass: "column is-1" }, [
-        _c("button", [_vm._v("View")])
-      ]),
-      _vm._v(" "),
-      _c("span", { staticClass: "column is-1" }, [
-        _c("button", [_vm._v("Edit")])
-      ]),
-      _vm._v(" "),
-      _c("span", { staticClass: "column is-1" }, [
-        _c("button", [_vm._v("Remove")])
-      ])
+    return _c("span", { staticClass: "column is-1" }, [
+      _c("button", [_vm._v("Edit")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "column is-1" }, [
+      _c("button", [_vm._v("Remove")])
     ])
   }
 ]
@@ -45760,6 +45839,187 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 53 */,
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */,
+/* 58 */,
+/* 59 */,
+/* 60 */,
+/* 61 */,
+/* 62 */,
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(65)
+/* template */
+var __vue_template__ = __webpack_require__(64)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/Show.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-55769598", Component.options)
+  } else {
+    hotAPI.reload("data-v-55769598", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "modal", class: _vm.openshowmodal }, [
+    _c("div", { staticClass: "modal-background" }),
+    _vm._v(" "),
+    _c("div", { staticClass: "modal-card" }, [
+      _c("header", { staticClass: "modal-card-head" }, [
+        _c("p", { staticClass: "modal-card-title" }, [_vm._v("Details")]),
+        _vm._v(" "),
+        _c("button", {
+          staticClass: "delete",
+          attrs: { "aria-label": "close" },
+          on: { click: _vm.close }
+        })
+      ]),
+      _vm._v(" "),
+      _c("section", { staticClass: "modal-card-body" }, [
+        _c("div", { staticClass: "field" }, [
+          _c("label", { staticClass: "label" }, [_vm._v("Name")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "control" }, [
+            _vm._v("\n          " + _vm._s(_vm.list.name) + "\n        ")
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "field" }, [
+          _c("label", { staticClass: "label" }, [_vm._v("Phone")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "control" }, [
+            _vm._v("\n          " + _vm._s(_vm.list.phone) + "\n        ")
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "field" }, [
+          _c("label", { staticClass: "label" }, [_vm._v("Email")]),
+          _vm._v(" "),
+          _c("div", { staticClass: "control" }, [
+            _vm._v("\n          " + _vm._s(_vm.list.email) + "\n        ")
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("footer", { staticClass: "modal-card-foot" }, [
+        _c("button", { staticClass: "button", on: { click: _vm.close } }, [
+          _vm._v("Cancel")
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-55769598", module.exports)
+  }
+}
+
+/***/ }),
+/* 65 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ["openshowmodal"],
+  data: function data() {
+    return {
+      list: {}
+    };
+  },
+
+  methods: {
+    close: function close() {
+      this.$emit("closeRequest");
+    }
+  }
+});
 
 /***/ })
 /******/ ]);
